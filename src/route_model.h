@@ -8,8 +8,8 @@
 #include <iostream>
 
 class RouteModel : public Model {
-
   public:
+
     class Node : public Model::Node {
       public:
         Node * parent = nullptr;

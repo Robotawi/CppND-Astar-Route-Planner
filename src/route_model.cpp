@@ -41,7 +41,7 @@ RouteModel::Node *RouteModel::Node::FindNeighbor(std::vector<int> node_indices) 
     return closest_node;
 }
 
-
+//note the scope operators, a class inside a class
 void RouteModel::Node::FindNeighbors() {
     for (auto & road : parent_model->node_to_road[this->index]) {
         RouteModel::Node *new_neighbor = this->FindNeighbor(parent_model->Ways()[road->way].nodes);

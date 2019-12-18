@@ -21,12 +21,11 @@ RoutePlanner::RoutePlanner(RouteModel &model, float start_x, float start_y, floa
 // Tips:
 // - You can use the distance to the end_node for the h value.
 // - Node objects have a distance method to determine the distance to another node.
-float RoutePlanner::CalculateHValue(RouteModel::Node const *node) {
+void RoutePlanner::CalculateHValue(RouteModel::Node *node) {
     // h is the distance between the current and the end
     // this function receives the node, then we need to calculate the H value.
     // TODO: my recheck, is only the distance enough?
-    float h = node->distance(*end_node);
-    return h;
+    node->h_value = node->distance(*end_node);
 }
 
 
@@ -39,12 +38,11 @@ float RoutePlanner::CalculateHValue(RouteModel::Node const *node) {
 
 void RoutePlanner::AddNeighbors(RouteModel::Node *current_node) {
     current_node->FindNeighbors();
-    for (auto neighbor : current_node->neighbors){
+    for (auto neighbor : current_node->neighbors){ //nei are pointers to nodes
         neighbor->parent = current_node;
-        neighbor->h_value = CalculateHValue(neighbor);//this will calculate the distance from the neighbor node to the end
+        CalculateHValue(neighbor);//this will calculate the distance from the neighbor node to the end
         neighbor->g_value = current_node->g_value + current_node->distance(*neighbor); //*neighbor is a pointer to node content (node)
         open_list.push_back(neighbor);
-
     }
 }
 
@@ -58,21 +56,28 @@ void RoutePlanner::AddNeighbors(RouteModel::Node *current_node) {
 // - Return the pointer.
 
  bool RoutePlanner::Compare (const RouteModel::Node & n1, const RouteModel::Node & n2){
-    float f1 = n1.g_value + CalculateHValue(&n1);
-    float f2 = n2.g_value + CalculateHValue(&n2);
+    float f1 = n1.g_value + n1.h_value;
+    float f2 = n2.g_value + n2.h_value;
     return f1>f2;
 }
 void RoutePlanner::NodeSort(std::vector<RouteModel::Node*> &openlist){
     //sort the openlist and return it
     //the nodes are being pointed to by the vector elements, dereferene them
-    std::sort(*openlist.begin(), *openlist.end(), &RoutePlanner::Compare);
+    std::cout << " Inside NodeSort \n";
+    std::sort(*openlist.begin(), *openlist.end(), Compare);
 
 }
 RouteModel::Node* RoutePlanner::NextNode(std::vector<RouteModel::Node*> &openlist) {//ref to vector of pointers to nodes
     //receives the a pointer to openlist, checks the nodes and returns a pointer to the node of lowest F value as the next node to check
     //pointer to vector of nodes
     // TODO: Note that openlist is originally a member in the Routeplanner
+    std::cout << " Inside NextNode \n";
     NodeSort(openlist);
+    std::cout << " After NodeSort \n";
+    auto F0 = openlist[0]->g_value+openlist[0]->h_value;
+    std::cout << "F0 value is "<< F0<<"\n";
+    auto Fe = openlist.back()->g_value+openlist.back()->h_value;
+    std::cout << "Fe value is "<< Fe<<"\n";
     return openlist[0];
     }
 
@@ -106,14 +111,12 @@ std::vector<RouteModel::Node> RoutePlanner::ConstructFinalPath(RouteModel::Node 
 // - Store the final path in the m_Model.path attribute before the method exits. This path will then be displayed on the map tile.
 
 void RoutePlanner::AStarSearch() {
+    std::cout << " Inside Astarsearch \n";
     //takes start, end,
     RouteModel::Node *current_node = nullptr;
     //its astar search will search its own private variable?
     // TODO: Implement your solution here.
     AddNeighbors(start_node);
+    std::cout << " Got neighbours \n";
     NextNode(open_list);
-
-
-
-
 }

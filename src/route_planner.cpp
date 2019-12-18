@@ -21,11 +21,11 @@ RoutePlanner::RoutePlanner(RouteModel &model, float start_x, float start_y, floa
 // Tips:
 // - You can use the distance to the end_node for the h value.
 // - Node objects have a distance method to determine the distance to another node.
-void RoutePlanner::CalculateHValue(RouteModel::Node *node) {
+float RoutePlanner::CalculateHValue(RouteModel::Node const *node) {
     // h is the distance between the current and the end
     // this function receives the node, then we need to calculate the H value.
     // TODO: my recheck, is only the distance enough?
-    node->h_value = node->distance(*end_node);
+    return node->distance(*end_node);
 }
 
 
@@ -40,9 +40,10 @@ void RoutePlanner::AddNeighbors(RouteModel::Node *current_node) {
     current_node->FindNeighbors();
     for (auto neighbor : current_node->neighbors){ //nei are pointers to nodes
         neighbor->parent = current_node;
-        CalculateHValue(neighbor);//this will calculate the distance from the neighbor node to the end
+        neighbor->h_value = CalculateHValue(neighbor);//this will calculate the distance from the neighbor node to the end
         neighbor->g_value = current_node->g_value + current_node->distance(*neighbor); //*neighbor is a pointer to node content (node)
         open_list.push_back(neighbor);
+        neighbor->visited = true;
     }
 }
 
@@ -94,12 +95,16 @@ std::vector<RouteModel::Node> RoutePlanner::ConstructFinalPath(RouteModel::Node 
     // Create path_found vector
     distance = 0.0f;
     std::vector<RouteModel::Node> path_found;
-
-    // TODO: Implement your solution here.
-
+    path_found.push_back(*current_node);
+    while (current_node->parent != nullptr){
+        path_found.push_back(*current_node->parent);
+        distance += current_node->distance(*current_node->parent);
+        //do it recursively
+        current_node = current_node->parent;
+    }
+    std::reverse(path_found.begin(), path_found.end());
     distance *= m_Model.MetricScale(); // Multiply the distance by the scale of the map to get meters.
     return path_found;
-
 }
 
 
@@ -114,9 +119,8 @@ void RoutePlanner::AStarSearch() {
     std::cout << " Inside Astarsearch \n";
     //takes start, end,
     RouteModel::Node *current_node = nullptr;
-    //its astar search will search its own private variable?
-    // TODO: Implement your solution here.
     AddNeighbors(start_node);
     std::cout << " Got neighbours \n";
     NextNode(open_list);
+    //TODO: make the search
 }

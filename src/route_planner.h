@@ -16,7 +16,7 @@ class RoutePlanner {
 
     // The following methods have been made public so we can test them individually.
     void AddNeighbors(RouteModel::Node *current_node);
-    void CalculateHValue(RouteModel::Node *node);
+    float CalculateHValue(RouteModel::Node const *node);
     std::vector<RouteModel::Node> ConstructFinalPath(RouteModel::Node *);
     RouteModel::Node *NextNode(std::vector<RouteModel::Node*> &openlist); //takes the open_list private variable, passes it to NodeSort which returns a new sorted openlist, then
     //this function returns the first element in the sorted openlist

@@ -121,6 +121,18 @@ void RoutePlanner::AStarSearch() {
     RouteModel::Node *current_node = nullptr;
     AddNeighbors(start_node);
     std::cout << " Got neighbours \n";
-    NextNode(open_list);
-    //TODO: make the search
+    while (!open_list.empty()){
+        //sort it
+        RouteModel::Node * next_node = NextNode(open_list);
+        if (next_node == end_node){
+            //search is done, and path is found
+            m_Model.path = ConstructFinalPath(next_node);
+        }
+        else{
+            AddNeighbors(next_node);
+        }
+    }
+
+
+    //TODO: if the node is the goal, then its done, and call the constrcutfinalpath
 }

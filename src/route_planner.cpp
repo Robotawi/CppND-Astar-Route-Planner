@@ -139,7 +139,4 @@ void RoutePlanner::AStarSearch() {
             AddNeighbors(next_node);
         }
     }
-
-
-    //TODO: if the node is the goal, then its done, and call the constrcutfinalpath
 }

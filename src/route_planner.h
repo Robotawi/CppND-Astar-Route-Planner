@@ -18,17 +18,14 @@ class RoutePlanner {
     void AddNeighbors(RouteModel::Node *current_node);
     float CalculateHValue(RouteModel::Node const *node);
     std::vector<RouteModel::Node> ConstructFinalPath(RouteModel::Node *);
-    RouteModel::Node *NextNode(std::vector<RouteModel::Node*> &openlist); //takes the open_list private variable, passes it to NodeSort which returns a new sorted openlist, then
-    //this function returns the first element in the sorted openlist
+    RouteModel::Node *NextNode(std::vector<RouteModel::Node*> &openlist);
 
-    //RouteModel::Node *NextNode(std::vector<RouteModel::Node> *);
-    // to compare nodes F value
     static bool Compare (const RouteModel::Node * n1, const RouteModel::Node * n2);
     void NodeSort(std::vector<RouteModel::Node*> &openlist);
 
   private:
     // Add private variables or methods declarations here.
-    std::vector<RouteModel::Node*> open_list; //type vector of pointers to nodes, then receive a reference to it. Then, consider that the contents are pointers, then dereference with *
+    std::vector<RouteModel::Node*> open_list;
     RouteModel::Node *start_node;
     RouteModel::Node *end_node;
 

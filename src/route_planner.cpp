@@ -56,30 +56,35 @@ void RoutePlanner::AddNeighbors(RouteModel::Node *current_node) {
 // - Remove that node from the open_list.
 // - Return the pointer.
 
- bool RoutePlanner::Compare (const RouteModel::Node & n1, const RouteModel::Node & n2){
-    float f1 = n1.g_value + n1.h_value;
-    float f2 = n2.g_value + n2.h_value;
+ bool RoutePlanner::Compare (const RouteModel::Node * n1, const RouteModel::Node * n2){
+    float f1 = n1->g_value + n1->h_value;
+    float f2 = n2->g_value + n2->h_value;
     return f1>f2;
 }
 void RoutePlanner::NodeSort(std::vector<RouteModel::Node*> &openlist){
     //sort the openlist and return it
     //the nodes are being pointed to by the vector elements, dereferene them
-    std::cout << " Inside NodeSort \n";
-    std::sort(*openlist.begin(), *openlist.end(), Compare);
+    //std::cout << " Inside NodeSort \n";
+    std::sort(openlist.begin(), openlist.end(), Compare);
 
 }
 RouteModel::Node* RoutePlanner::NextNode(std::vector<RouteModel::Node*> &openlist) {//ref to vector of pointers to nodes
     //receives the a pointer to openlist, checks the nodes and returns a pointer to the node of lowest F value as the next node to check
     //pointer to vector of nodes
     // TODO: Note that openlist is originally a member in the Routeplanner
-    std::cout << " Inside NextNode \n";
+    //std::cout << " Inside NextNode \n";
     NodeSort(openlist);
-    std::cout << " After NodeSort \n";
-    auto F0 = openlist[0]->g_value+openlist[0]->h_value;
-    std::cout << "F0 value is "<< F0<<"\n";
-    auto Fe = openlist.back()->g_value+openlist.back()->h_value;
-    std::cout << "Fe value is "<< Fe<<"\n";
-    return openlist[0];
+  	//uncomment tocheck the expected processing is happeninig
+    //std::cout << " Openlist size is: "<< openlist.size()<<" \n";
+    //std::cout << " After NodeSort \n";
+    //auto F0 = openlist[0]->g_value+openlist[0]->h_value;
+    //std::cout << "F0 value is "<< F0<<"\n";
+    //auto Fe = openlist.back()->g_value+openlist.back()->h_value;
+    //std::cout << "Fe value is "<< Fe<<"\n";
+    auto nextnode = openlist[0];
+    openlist.erase(openlist.begin());
+    //std::cout << " After erase Openlist size is: "<< openlist.size()<<" \n";
+    return nextnode;
     }
 
 
@@ -116,19 +121,21 @@ std::vector<RouteModel::Node> RoutePlanner::ConstructFinalPath(RouteModel::Node 
 // - Store the final path in the m_Model.path attribute before the method exits. This path will then be displayed on the map tile.
 
 void RoutePlanner::AStarSearch() {
-    std::cout << " Inside Astarsearch \n";
+    //std::cout << " Inside Astarsearch \n";
     //takes start, end,
     RouteModel::Node *current_node = nullptr;
     AddNeighbors(start_node);
-    std::cout << " Got neighbours \n";
+    //std::cout << " Got neighbours \n";
     while (!open_list.empty()){
         //sort it
         RouteModel::Node * next_node = NextNode(open_list);
-        if (next_node == end_node){
+        if (next_node->x == end_node->x && next_node->y == end_node->y){
+            std::cout <<"Goal node found! \n";
             //search is done, and path is found
             m_Model.path = ConstructFinalPath(next_node);
         }
         else{
+            std::cout <<"Not goal node, expanding neighbors... \n";
             AddNeighbors(next_node);
         }
     }

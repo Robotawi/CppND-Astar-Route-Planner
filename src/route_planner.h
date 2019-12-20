@@ -23,7 +23,7 @@ class RoutePlanner {
 
     //RouteModel::Node *NextNode(std::vector<RouteModel::Node> *);
     // to compare nodes F value
-    static bool Compare (const RouteModel::Node & n1, const RouteModel::Node & n2);
+    static bool Compare (const RouteModel::Node * n1, const RouteModel::Node * n2);
     void NodeSort(std::vector<RouteModel::Node*> &openlist);
 
   private:

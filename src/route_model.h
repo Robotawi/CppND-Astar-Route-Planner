@@ -22,7 +22,6 @@ class RouteModel : public Model {
         float distance(Node other) const {
             return std::sqrt(std::pow((x - other.x), 2) + std::pow((y - other.y), 2));
         }
-
         Node(){}
         Node(int idx, RouteModel * search_model, Model::Node node) : Model::Node(node), parent_model(search_model), index(idx) {}
 
@@ -36,12 +35,11 @@ class RouteModel : public Model {
     Node &FindClosestNode(float x, float y);
     auto &SNodes() { return m_Nodes; }
     std::vector<Node> path;
-    
+
   private:
     void CreateNodeToRoadHashmap();
     std::unordered_map<int, std::vector<const Model::Road *>> node_to_road;
     std::vector<Node> m_Nodes;
-
 };
 
 #endif

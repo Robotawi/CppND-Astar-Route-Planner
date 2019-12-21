@@ -59,7 +59,7 @@ void RoutePlanner::AddNeighbors(RouteModel::Node *current_node) {
  bool RoutePlanner::Compare (const RouteModel::Node * n1, const RouteModel::Node * n2){
     float f1 = n1->g_value + n1->h_value;
     float f2 = n2->g_value + n2->h_value;
-    return f1>f2;
+    return f1<f2;
 }
 void RoutePlanner::NodeSort(std::vector<RouteModel::Node*> &openlist){
     //sort the openlist and return it
@@ -100,15 +100,26 @@ std::vector<RouteModel::Node> RoutePlanner::ConstructFinalPath(RouteModel::Node 
     // Create path_found vector
     distance = 0.0f;
     std::vector<RouteModel::Node> path_found;
-    path_found.push_back(*current_node);
-    while (current_node->parent != nullptr){
+    //path_found.push_back(*current_node);
+    
+    /*while (current_node){
+        std::cout << "Path building in progress. current_node pointer is " << current_node->parent<<" \n";
         path_found.push_back(*current_node->parent);
         distance += current_node->distance(*current_node->parent);
-        //do it recursively
+        //do it recursively, let the current node take the place of its parent, then check the parent of the parent
+        current_node = current_node->parent;
+    }*/
+    // while node is not the first node
+    while (!(current_node->x == start_node->x && current_node->y == start_node->y)){
+        std::cout << "Path building in progress. current_node pointer is " << current_node->parent<<" \n";
+        path_found.push_back(*current_node->parent);
+        distance += current_node->distance(*current_node->parent);
+        //do it recursively, let the current node take the place of its parent, then check the parent of the parent
         current_node = current_node->parent;
     }
     std::reverse(path_found.begin(), path_found.end());
     distance *= m_Model.MetricScale(); // Multiply the distance by the scale of the map to get meters.
+  	std::cout<<"Path found and returned! \n";
     return path_found;
 }
 
@@ -123,6 +134,7 @@ std::vector<RouteModel::Node> RoutePlanner::ConstructFinalPath(RouteModel::Node 
 void RoutePlanner::AStarSearch() {
     //std::cout << " Inside Astarsearch \n";
     //takes start, end,
+    std::cout<<"start node pointer value is "<< start_node->parent<<"\n";
     RouteModel::Node *current_node = nullptr;
     AddNeighbors(start_node);
     //std::cout << " Got neighbours \n";
@@ -133,6 +145,8 @@ void RoutePlanner::AStarSearch() {
             std::cout <<"Goal node found! \n";
             //search is done, and path is found
             m_Model.path = ConstructFinalPath(next_node);
+          	std::cout <<"Final path constructed! \n";
+          	return;
         }
         else{
             std::cout <<"Not goal node, expanding neighbors... \n";

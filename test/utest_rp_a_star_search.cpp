@@ -119,4 +119,5 @@ TEST_F(RoutePlannerTest, TestAStarSearch) {
     EXPECT_FLOAT_EQ(end_node->x, path_end.x);
     EXPECT_FLOAT_EQ(end_node->y, path_end.y);
     EXPECT_FLOAT_EQ(route_planner.GetDistance(), 873.41565);
+
 }

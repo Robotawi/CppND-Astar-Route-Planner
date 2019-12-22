@@ -23,8 +23,6 @@ RoutePlanner::RoutePlanner(RouteModel &model, float start_x, float start_y, floa
 // - Node objects have a distance method to determine the distance to another node.
 float RoutePlanner::CalculateHValue(RouteModel::Node const *node) {
     // h is the distance between the current and the end
-    // this function receives the node, then we need to calculate the H value.
-    // TODO: my recheck, is only the distance enough?
     return node->distance(*end_node);
 }
 
@@ -98,7 +96,7 @@ RouteModel::Node* RoutePlanner::NextNode(std::vector<RouteModel::Node*> &openlis
 
 std::vector<RouteModel::Node> RoutePlanner::ConstructFinalPath(RouteModel::Node *current_node) {
     // Create path_found vector
-    int count = 0;
+    //int count = 0;
     distance = 0.0f;
     std::vector<RouteModel::Node> path_found;
     std::cout<<"inisde ConstructFinalPath \n";
@@ -109,8 +107,8 @@ std::vector<RouteModel::Node> RoutePlanner::ConstructFinalPath(RouteModel::Node 
     //one way to do it (has a problem)
 
     while(current_node->parent != nullptr){
-        count++;
-        std::cout<<"The final path is being built..."<<count<<" \n";
+        //count++;
+        //std::cout<<"The final path is being built..."<<count<<" \n";
         path_found.push_back(*current_node);
         distance += current_node->distance(*(current_node->parent));
         current_node = current_node->parent;
@@ -152,22 +150,24 @@ void RoutePlanner::AStarSearch() {
     open_list.push_back(current_node);
 
     while (!open_list.empty()){
-        //RouteModel::Node * next_node = NextNode(open_list);
+        //make sure the current node is decided out before the if/else check!
+        current_node = NextNode(open_list);
+
         if (current_node->x == end_node->x && current_node->y == end_node->y){
             std::cout <<"Goal node found! \n";
             //search is done, and path is found
             m_Model.path = ConstructFinalPath(current_node);
-            std::cout <<"Start: x = "<< start_node->x << ", y = "<< start_node->y << " \n";
-            std::cout <<"End: x = "<< current_node->x << ", y = "<< current_node->y << " \n";
+            std::cout<<"***To check the found path order*** \n";
+            std::cout <<"User: Start: x = "<< start_node->x << ", y = "<< start_node->y << " \n";
+            std::cout <<"User: End: x = "<< end_node->x << ", y = "<< end_node->y << " \n";
             std::cout <<"Final path constructed! \n";
-            std::cout <<"Start: x = "<< m_Model.path.front().x << ", y = "<< m_Model.path.front().y << " \n";
-            std::cout <<"End: x = "<< m_Model.path.back().x << ", y = "<< m_Model.path.back().y << " \n";
+            std::cout <<"Final path: Start: x = "<< m_Model.path.front().x << ", y = "<< m_Model.path.front().y << " \n";
+            std::cout <<"Final path: End: x = "<< m_Model.path.back().x << ", y = "<< m_Model.path.back().y << " \n";
             return;
         }
         else{
             std::cout <<"Not goal node, expanding neighbors... \n";
             AddNeighbors(current_node);
-            current_node = NextNode(open_list);
         }
     }
 }

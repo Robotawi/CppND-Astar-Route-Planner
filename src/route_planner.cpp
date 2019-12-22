@@ -143,7 +143,7 @@ void RoutePlanner::AStarSearch() {
     //std::cout << " Inside Astarsearch \n";
     //while processing, think that you are dealing with a current node
     RouteModel::Node * current_node = start_node;
-    current_node->parent = nullptr;
+    //current_node->parent = nullptr;
     current_node->visited = true;
     current_node->g_value = 0;
     current_node->h_value = CalculateHValue(current_node);

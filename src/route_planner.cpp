@@ -21,14 +21,26 @@ float RoutePlanner::CalculateHValue(RouteModel::Node const *node) {
     return node->distance(*end_node);
 }
 
+//void RoutePlanner::AddNeighbors(RouteModel::Node *current_node) {
+//    current_node->FindNeighbors();
+//    for (auto neighbor : current_node->neighbors){ //neighbors are pointers to nodes
+//        neighbor->parent = current_node;
+//        neighbor->h_value = CalculateHValue(neighbor);//this will calculate the distance from the neighbor node to the end
+//        neighbor->g_value = current_node->g_value + current_node->distance(*neighbor); //*neighbor is a pointer to node content (node)
+//        open_list.push_back(neighbor);
+//        neighbor->visited = true;
+//    }
+//}
+
 void RoutePlanner::AddNeighbors(RouteModel::Node *current_node) {
     current_node->FindNeighbors();
-    for (auto neighbor : current_node->neighbors){ //neighbors are pointers to nodes
+    for (RouteModel::Node  *neighbor : current_node->neighbors) {
         neighbor->parent = current_node;
-        neighbor->h_value = CalculateHValue(neighbor);//this will calculate the distance from the neighbor node to the end
-        neighbor->g_value = current_node->g_value + current_node->distance(*neighbor); //*neighbor is a pointer to node content (node)
-        open_list.push_back(neighbor);
+        // the error is here: neighbor->g_value = neighbor->distance(*current_node);
+        neighbor->g_value = current_node->g_value + neighbor->distance(*current_node);
+        neighbor->h_value = CalculateHValue(neighbor);
         neighbor->visited = true;
+        open_list.push_back(neighbor);
     }
 }
 

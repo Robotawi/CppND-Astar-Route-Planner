@@ -3,14 +3,12 @@
 #include <vector>
 
 RoutePlanner::RoutePlanner(RouteModel &model, float start_x, float start_y, float end_x, float end_y): m_Model(model) {
-    // Partial initizalization of the private variable m_Model
     // Convert inputs to percentage:
     start_x *= 0.01;
     start_y *= 0.01;
     end_x *= 0.01;
     end_y *= 0.01;
 
-    // TODO 2: Use the m_Model.FindClosestNode method to find the closest nodes to the starting and ending coordinates.
     // Store the nodes you find in the RoutePlanner's start_node and end_node attributes.
     start_node = &m_Model.FindClosestNode(start_x, start_y);
     end_node = & m_Model.FindClosestNode(end_x, end_y);
@@ -38,12 +36,10 @@ void RoutePlanner::AddNeighbors(RouteModel::Node *current_node) {
     return f1<f2;
 }
 void RoutePlanner::NodeSort(std::vector<RouteModel::Node*> &openlist){
-    //sort the openlist and return it
-    std::sort(openlist.begin(), openlist.end(), Compare);
+    sort(open_list.begin(), open_list.end(), [] (const RouteModel::Node *node1 , const RouteModel::Node *node2) {return node1->g_value + node1->h_value < node2->g_value + node2->h_value;});
 
 }
 RouteModel::Node* RoutePlanner::NextNode(std::vector<RouteModel::Node*> &openlist) {
-    //receives the a reference to openlist, checks the nodes and returns a pointer to the node of lowest F value as the next node to check
     NodeSort(openlist);
     RouteModel::Node* nextnode = openlist.front();
     openlist.erase(openlist.begin());
@@ -85,7 +81,6 @@ void RoutePlanner::AStarSearch() {
     open_list.push_back(current_node);
 
     while (!open_list.empty()){
-        //make sure the current node is decided out before the if/else check!
         current_node = NextNode(open_list);
 
         if (current_node->x == end_node->x && current_node->y == end_node->y){
@@ -93,7 +88,6 @@ void RoutePlanner::AStarSearch() {
             return;
         }
         else{
-            //std::cout <<"Not goal node, expanding neighbors... \n";
             AddNeighbors(current_node);
         }
     }

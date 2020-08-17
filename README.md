@@ -21,14 +21,14 @@ This is an A* based route planning project. The planner uses OpenStreetMap data 
     * Installation instructions for all operating systems can be found [here](https://github.com/cpp-io2d/P0267_RefImpl/blob/master/BUILDING.md)
     * This library must be built in a place where CMake `find_package` will be able to find it
   
-## Clone
+- #### Clone
 
 When cloning this project, be sure to use the `--recurse-submodules` flag.
 ```
 git clone https://github.com/Robotawi/CppND-Astar-Route-Planner.git --recurse-submodules
 ```
 
-## Setup
+- #### Setup
   ```
   cd CppND-Astar-Route-Planner
   mkdir build 
